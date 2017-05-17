@@ -159,7 +159,7 @@ def main(argv):
         print("Extracted: {} grammar(s), {} word(s), Dict={}, Unique={}".format(len(RULE), len(PAIR_LIST), dict, unique))
 
     else:
-        print('gramextract.py -i <inputfile> -o <outputfile> -d <outputdict?>')
+        print('gramextract.py -i <inputfile> -o <outputfile> -d <outputdict?> -u <unique sorting?>')
 
 if __name__ == '__main__':
     main(sys.argv[1:])
