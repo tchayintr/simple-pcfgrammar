@@ -125,7 +125,7 @@ def main(argv):
     unique = False
 
     try:
-        opts, args = getopt.getopt(argv, "i:o:du", ["ifile=", "ofile=", "dict", "unique"])
+        opts, args = getopt.getopt(argv, "i:o::du", ["ifile=", "ofile=", "dict", "unique"])
     except getopt.GetoptError:
         print('gramextract.py -i <inputfile> -o <outputfile> -d <outputdict?> -u <unique sorting?>')
         sys.exit(2)

@@ -21,4 +21,14 @@
         % VERB/owned
 
 
-* grammarpcfg.py: calculate probability of all CFG
+* grammarpcfg.py: calculates probability of all CFG
+
+     <b>USAGE:</b> $ python3 grampcfg.py -i <inputfile> -o <outputfile>
+     - Input example: a list of CFG
+     - Output example (sorted by probability):
+
+        % S-->NP,VP. | Prob:0.29464
+
+        % S-->NP,VP,PP. | Prob:0.08036
+
+        % ...

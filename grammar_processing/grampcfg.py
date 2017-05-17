@@ -1,13 +1,14 @@
-import time
+#! /usr/bin/env python3
 
-# rdir = "/Users/AdminZ/Desktop/tree-pdf/Fairytales/sorted_CFG-v2-cut.txt"
-# rdir = "/Users/AdminZ/Desktop/workspace/datasets/fairytales/grammar/fairytale_grammar.txt"
-# rdir = "/Users/AdminZ/Desktop/tree-pdf/Fairytales/sorted_CFG-v1.txt"
+import sys, getopt
+
+r_dir = None
+w_dir = "./output/pcfg.txt"
 
 LEFTDIV_SEP = '-->'
 RIGHTDIV_SEP = ','
 FREQ = 'frequency'
-RULE_FREQ = 'rule_frequency'      #
+RULE_FREQ = 'rule_frequency'
 PROBABILITY = 'probability'
 
 class PCFG:
@@ -97,29 +98,54 @@ def writefile(wdir, data):
         for datum in data:
             wfd.write(datum)
 
+def writeresult(wdir, data):
+    with open(wdir, 'w', encoding='utf-8') as wfd:
+        for lhs in data:
+            sorted_dict = sorted(data[lhs].items(), key=lambda x: x[1][PROBABILITY], reverse=True)
+            for item in sorted_dict:
+                rhs = item[0]
+                prob = item[1][PROBABILITY]
+                wfd.write("{}{}{} | Prob:{:.5f}\n".format(lhs, LEFTDIV_SEP, rhs, prob))
+
 def printresult(data):
     # print(result_dict)
-    for lhs in result_dict:
-        sorted_dict = sorted(result_dict[lhs].items(), key=lambda x: x[1][PROBABILITY], reverse=True)
+    for lhs in data:
+        sorted_dict = sorted(data[lhs].items(), key=lambda x: x[1][PROBABILITY], reverse=True)
         for item in sorted_dict:
             rhs = item[0]
             prob = item[1][PROBABILITY]
             freq = item[1][FREQ]
             print("{}{}{} | Prob:{:.5f}, Freq:{}".format(lhs, LEFTDIV_SEP, rhs, prob, freq))
 
+def main(argv):
+    global r_dir, w_dir
+
+    try:
+        opts, args = getopt.getopt(argv, "i:o::", ["ifile=", "ofile="])
+    except getopt.GetoptError:
+        print("GGG")
+        print('grampcfg.py -i <inputfile> -o <outputfile>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('grampcfg.py -i <inputfile> -o <outputfile>')
+            sys.exit()
+        elif opt in ("-i", "--ifile"):
+            r_dir = arg
+        elif opt in ("-o", "--ofile"):
+            w_dir = arg
+        else:
+            print('grampcfg.py -i <inputfile> -o <outputfile>')
+
+    if r_dir:
+        result_dict = {}
+        grammars = read_grammar(r_dir)
+        parser = PCFG(grammars)
+        result_dict = parser.get_result()
+        writeresult(w_dir, result_dict)
+    else:
+        print('grampcfg.py -i <inputfile> -o <outputfile>')
+
 #===========================================================
 if __name__ == "__main__":
-    #-----------------------
-    s_time = time.time()
-
-    result_dict = {}
-    grammars = read_grammar(rdir)
-    parser = PCFG(grammars)
-    result_dict = parser.get_result()
-
-    printresult(result_dict)
-
-    #-----------------------
-    e_time = time.time()
-    timer = e_time - s_time
-    print("Processed in {} second(s)".format(timer))
+    main(sys.argv[1:])
